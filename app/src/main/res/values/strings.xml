@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">中式台球</string>
+    <string name="player1">选手1</string>
+    <string name="player2">选手2</string>
+    <string name="player3">选手3</string>
+    <string name="win">胜</string>
+    <string name="foul">规</string>
+    <string name="reset">重置</string>
+    <string name="mode_2_player">2人</string>
+    <string name="mode_3_player">3人</string>
+    <string name="select_target">选择目标选手</string>
+    <string name="cancel">取消</string>
+    <string name="select_loser">选择失败者</string>
+    <string name="select_beneficiary">选择受益者</string>
+    <string name="confirm_reset">确定要重置所有分数吗？</string>
+    <string name="ok">确定</string>
+</resources>
