@@ -1,10 +1,10 @@
 <resources>
-    <string name="app_name">中式台球</string>
+    <string name="app_name">台球计分</string>
     <string name="player1">选手1</string>
     <string name="player2">选手2</string>
     <string name="player3">选手3</string>
-    <string name="win">胜</string>
-    <string name="foul">规</string>
+    <string name="win">普胜</string>
+    <string name="foul">犯规</string>
     <string name="reset">重置</string>
     <string name="mode_2_player">2人</string>
     <string name="mode_3_player">3人</string>
