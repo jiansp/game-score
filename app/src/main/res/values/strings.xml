@@ -5,6 +5,8 @@
     <string name="player3">选手3</string>
     <string name="win">普胜</string>
     <string name="foul">犯规</string>
+    <string name="small_win">小金</string>
+    <string name="big_win">大金</string>
     <string name="reset">重置</string>
     <string name="mode_2_player">2人</string>
     <string name="mode_3_player">3人</string>
@@ -12,6 +14,7 @@
     <string name="cancel">取消</string>
     <string name="select_loser">选择失败者</string>
     <string name="select_beneficiary">选择受益者</string>
+    <string name="select_big_loser">大金-选择失败者</string>
     <string name="confirm_reset">确定要重置所有分数吗？</string>
     <string name="ok">确定</string>
 </resources>

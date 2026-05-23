@@ -23,21 +23,29 @@ class MainActivity : ComponentActivity() {
     private val INITIAL_SCORE = 100
     private val WIN_SCORE = 4
     private val FOUL_SCORE = 1
+    private val SMALL_WIN_SCORE = 7
+    private val BIG_WIN_SCORE = 10
 
     private lateinit var prefs: SharedPreferences
 
     private lateinit var player1Score: TextView
     private lateinit var player1Win: Button
     private lateinit var player1Foul: Button
+    private lateinit var player1SmallWin: Button
+    private lateinit var player1BigWin: Button
 
     private lateinit var player2Score: TextView
     private lateinit var player2Win: Button
     private lateinit var player2Foul: Button
+    private lateinit var player2SmallWin: Button
+    private lateinit var player2BigWin: Button
 
     private lateinit var player3Card: CardView
     private lateinit var player3Score: TextView
     private lateinit var player3Win: Button
     private lateinit var player3Foul: Button
+    private lateinit var player3SmallWin: Button
+    private lateinit var player3BigWin: Button
 
     private lateinit var resetBtn: Button
     private lateinit var modeBtn: Button
@@ -75,15 +83,21 @@ class MainActivity : ComponentActivity() {
         player1Score = findViewById(R.id.player1_score)
         player1Win = findViewById(R.id.player1_win)
         player1Foul = findViewById(R.id.player1_foul)
+        player1SmallWin = findViewById(R.id.player1_small_win)
+        player1BigWin = findViewById(R.id.player1_big_win)
 
         player2Score = findViewById(R.id.player2_score)
         player2Win = findViewById(R.id.player2_win)
         player2Foul = findViewById(R.id.player2_foul)
+        player2SmallWin = findViewById(R.id.player2_small_win)
+        player2BigWin = findViewById(R.id.player2_big_win)
 
         player3Card = findViewById(R.id.player3_card)
         player3Score = findViewById(R.id.player3_score)
         player3Win = findViewById(R.id.player3_win)
         player3Foul = findViewById(R.id.player3_foul)
+        player3SmallWin = findViewById(R.id.player3_small_win)
+        player3BigWin = findViewById(R.id.player3_big_win)
 
         resetBtn = findViewById(R.id.reset_btn)
         modeBtn = findViewById(R.id.mode_btn)
@@ -128,10 +142,18 @@ class MainActivity : ComponentActivity() {
     private fun setupClickListeners() {
         player1Win.setOnClickListener { handleWin(0) }
         player1Foul.setOnClickListener { handleFoul(0) }
+        player1SmallWin.setOnClickListener { handleSmallWin(0) }
+        player1BigWin.setOnClickListener { handleBigWin(0) }
+
         player2Win.setOnClickListener { handleWin(1) }
         player2Foul.setOnClickListener { handleFoul(1) }
+        player2SmallWin.setOnClickListener { handleSmallWin(1) }
+        player2BigWin.setOnClickListener { handleBigWin(1) }
+
         player3Win.setOnClickListener { handleWin(2) }
         player3Foul.setOnClickListener { handleFoul(2) }
+        player3SmallWin.setOnClickListener { handleSmallWin(2) }
+        player3BigWin.setOnClickListener { handleBigWin(2) }
 
         resetBtn.setOnClickListener { showConfirmPanel() }
         modeBtn.setOnClickListener { togglePlayerMode() }
@@ -193,12 +215,41 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun handleSelectorClick(targetIndex: Int) {
-        if (pendingAction == "WIN") {
-            playerWin(pendingPlayer, targetIndex)
-        } else if (pendingAction == "FOUL") {
-            playerFoul(pendingPlayer, targetIndex)
+        when (pendingAction) {
+            "WIN" -> playerWin(pendingPlayer, targetIndex)
+            "FOUL" -> playerFoul(pendingPlayer, targetIndex)
+            "SMALL_WIN" -> playerSmallWin(pendingPlayer, targetIndex)
+            "BIG_WIN" -> playerBigWin(pendingPlayer)
         }
         hideSelector()
+    }
+
+    private fun handleSmallWin(playerIndex: Int) {
+        if (!isThreePlayerMode) {
+            val loserIndex = if (playerIndex == 0) 1 else 0
+            playerSmallWin(playerIndex, loserIndex)
+        } else {
+            pendingAction = "SMALL_WIN"
+            pendingPlayer = playerIndex
+            selectorTitle.text = getString(R.string.select_loser)
+            updateSelectorVisibility(playerIndex)
+            selectorPanel.visibility = View.VISIBLE
+            confirmPanel.visibility = View.GONE
+        }
+    }
+
+    private fun handleBigWin(playerIndex: Int) {
+        if (!isThreePlayerMode) {
+            val loserIndex = if (playerIndex == 0) 1 else 0
+            playerBigWin(playerIndex)
+        } else {
+            pendingAction = "BIG_WIN"
+            pendingPlayer = playerIndex
+            selectorTitle.text = getString(R.string.select_big_loser)
+            updateSelectorVisibility(playerIndex)
+            selectorPanel.visibility = View.VISIBLE
+            confirmPanel.visibility = View.GONE
+        }
     }
 
     private fun hideSelector() {
@@ -229,6 +280,38 @@ class MainActivity : ComponentActivity() {
 
         scores[foulIndex] -= FOUL_SCORE
         scores[beneficiaryIndex] += FOUL_SCORE
+
+        updateScores(scores)
+    }
+
+    private fun playerSmallWin(winnerIndex: Int, loserIndex: Int) {
+        val scores = intArrayOf(
+            player1Score.text.toString().toInt(),
+            player2Score.text.toString().toInt(),
+            player3Score.text.toString().toInt()
+        )
+
+        scores[winnerIndex] += SMALL_WIN_SCORE
+        scores[loserIndex] -= SMALL_WIN_SCORE
+
+        updateScores(scores)
+    }
+
+    private fun playerBigWin(winnerIndex: Int) {
+        val scores = intArrayOf(
+            player1Score.text.toString().toInt(),
+            player2Score.text.toString().toInt(),
+            player3Score.text.toString().toInt()
+        )
+
+        var totalDeduction = 0
+        for (i in scores.indices) {
+            if (i != winnerIndex) {
+                scores[i] -= BIG_WIN_SCORE
+                totalDeduction += BIG_WIN_SCORE
+            }
+        }
+        scores[winnerIndex] += totalDeduction
 
         updateScores(scores)
     }
