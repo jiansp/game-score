@@ -3,12 +3,17 @@ package com.spheign.gamescore
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.view.GestureDetector
+import android.view.MotionEvent
 import android.view.View
+import android.view.ViewConfiguration
 import android.widget.Button
 import android.widget.LinearLayout
+import android.widget.ScrollView
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.cardview.widget.CardView
+import kotlin.math.abs
 
 class MainActivity : ComponentActivity() {
     private val PREFS_NAME = "GameScorePrefs"
@@ -62,6 +67,10 @@ class MainActivity : ComponentActivity() {
     private lateinit var confirmOk: Button
     private lateinit var confirmCancel: Button
 
+    private lateinit var scrollView: ScrollView
+    private var lastAxisValue = 0f
+    private var scrollSensitivity: Float = 0f
+
     private var isThreePlayerMode = false
     private var pendingAction: String? = null
     private var pendingPlayer: Int = 0
@@ -113,6 +122,9 @@ class MainActivity : ComponentActivity() {
         confirmTitle = findViewById(R.id.confirm_title)
         confirmOk = findViewById(R.id.confirm_ok)
         confirmCancel = findViewById(R.id.confirm_cancel)
+
+        scrollView = findViewById(R.id.scroll_view)
+        scrollSensitivity = ViewConfiguration.get(this).scaledTouchSlop * 8f
 
         updateModeUI()
     }
@@ -174,6 +186,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun showConfirmPanel() {
+        pendingAction = null
         confirmTitle.text = getString(R.string.confirm_reset)
         confirmPanel.visibility = View.VISIBLE
         selectorPanel.visibility = View.GONE
@@ -349,5 +362,30 @@ class MainActivity : ComponentActivity() {
         editor.apply()
 
         loadScores()
+    }
+
+    override fun dispatchGenericMotionEvent(event: MotionEvent): Boolean {
+        if (!::scrollView.isInitialized) {
+            return super.dispatchGenericMotionEvent(event)
+        }
+        val axisValue = event.getAxisValue(MotionEvent.AXIS_SCROLL)
+        if (axisValue != 0f) {
+            val scrollAmount = (axisValue * scrollSensitivity).toInt()
+            scrollView.smoothScrollBy(0, scrollAmount)
+            return true
+        }
+        val hScroll = event.getAxisValue(MotionEvent.AXIS_HSCROLL)
+        if (hScroll != 0f) {
+            val scrollAmount = (hScroll * scrollSensitivity).toInt()
+            scrollView.smoothScrollBy(scrollAmount, 0)
+            return true
+        }
+        val vScroll = event.getAxisValue(MotionEvent.AXIS_VSCROLL)
+        if (vScroll != 0f) {
+            val scrollAmount = (vScroll * scrollSensitivity).toInt()
+            scrollView.smoothScrollBy(0, scrollAmount)
+            return true
+        }
+        return super.dispatchGenericMotionEvent(event)
     }
 }
