@@ -164,7 +164,10 @@ class MainActivity : ComponentActivity() {
         selectorCancel.setOnClickListener { hideSelector() }
 
         confirmOk.setOnClickListener {
-            resetScores()
+            when (pendingAction) {
+                "BIG_WIN_CONFIRM" -> playerBigWin(pendingPlayer)
+                else -> resetScores()
+            }
             hideConfirmPanel()
         }
         confirmCancel.setOnClickListener { hideConfirmPanel() }
@@ -219,7 +222,6 @@ class MainActivity : ComponentActivity() {
             "WIN" -> playerWin(pendingPlayer, targetIndex)
             "FOUL" -> playerFoul(pendingPlayer, targetIndex)
             "SMALL_WIN" -> playerSmallWin(pendingPlayer, targetIndex)
-            "BIG_WIN" -> playerBigWin(pendingPlayer)
         }
         hideSelector()
     }
@@ -239,17 +241,11 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun handleBigWin(playerIndex: Int) {
-        if (!isThreePlayerMode) {
-            val loserIndex = if (playerIndex == 0) 1 else 0
-            playerBigWin(playerIndex)
-        } else {
-            pendingAction = "BIG_WIN"
-            pendingPlayer = playerIndex
-            selectorTitle.text = getString(R.string.select_big_loser)
-            updateSelectorVisibility(playerIndex)
-            selectorPanel.visibility = View.VISIBLE
-            confirmPanel.visibility = View.GONE
-        }
+        pendingAction = "BIG_WIN_CONFIRM"
+        pendingPlayer = playerIndex
+        confirmTitle.text = getString(R.string.confirm_big_win)
+        confirmPanel.visibility = View.VISIBLE
+        selectorPanel.visibility = View.GONE
     }
 
     private fun hideSelector() {
@@ -305,7 +301,9 @@ class MainActivity : ComponentActivity() {
         )
 
         var totalDeduction = 0
-        for (i in scores.indices) {
+        val playerCount = if (isThreePlayerMode) 3 else 2
+
+        for (i in 0 until playerCount) {
             if (i != winnerIndex) {
                 scores[i] -= BIG_WIN_SCORE
                 totalDeduction += BIG_WIN_SCORE

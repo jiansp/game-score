@@ -16,5 +16,6 @@
     <string name="select_beneficiary">选择受益者</string>
     <string name="select_big_loser">大金-选择失败者</string>
     <string name="confirm_reset">确定要重置所有分数吗？</string>
+    <string name="confirm_big_win">确定执行大金吗？</string>
     <string name="ok">确定</string>
 </resources>
