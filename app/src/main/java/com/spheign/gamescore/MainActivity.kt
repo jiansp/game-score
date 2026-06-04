@@ -370,19 +370,19 @@ class MainActivity : ComponentActivity() {
         }
         val axisValue = event.getAxisValue(MotionEvent.AXIS_SCROLL)
         if (axisValue != 0f) {
-            val scrollAmount = (axisValue * scrollSensitivity).toInt()
+            val scrollAmount = (-axisValue * scrollSensitivity).toInt()
             scrollView.smoothScrollBy(0, scrollAmount)
             return true
         }
         val hScroll = event.getAxisValue(MotionEvent.AXIS_HSCROLL)
         if (hScroll != 0f) {
-            val scrollAmount = (hScroll * scrollSensitivity).toInt()
+            val scrollAmount = (-hScroll * scrollSensitivity).toInt()
             scrollView.smoothScrollBy(scrollAmount, 0)
             return true
         }
         val vScroll = event.getAxisValue(MotionEvent.AXIS_VSCROLL)
         if (vScroll != 0f) {
-            val scrollAmount = (vScroll * scrollSensitivity).toInt()
+            val scrollAmount = (-vScroll * scrollSensitivity).toInt()
             scrollView.smoothScrollBy(0, scrollAmount)
             return true
         }

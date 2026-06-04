@@ -85,3 +85,6 @@ package-lock.json
 # Build outputs
 app/build/
 app/outputs/
+
+.qoder
+openspec
